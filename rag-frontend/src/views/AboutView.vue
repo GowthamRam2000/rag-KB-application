@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <!-- Back Navigation Bar - Mobile & Desktop -->
     <v-app-bar
       color="primary"
       dark
@@ -20,8 +19,6 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-
-      <!-- Desktop Quick Actions -->
       <div v-if="!mobile" class="d-flex ga-2">
         <v-btn
           href="https://rag-frontend-355828630002.us-central1.run.app/dashboard"
@@ -45,9 +42,7 @@
       </div>
     </v-app-bar>
 
-    <!-- Main Content with proper spacing -->
     <div class="content-wrapper">
-      <!-- Hero Section -->
       <div class="hero-section">
         <v-container fluid class="pa-0">
           <div class="hero-content pa-8 text-center">
@@ -80,8 +75,6 @@
                 Cloud Run
               </v-chip>
             </div>
-
-            <!-- Mobile Quick Actions -->
             <div v-if="mobile" class="d-flex flex-column ga-3 mb-6">
               <v-btn
                 href="https://rag-frontend-355828630002.us-central1.run.app/dashboard"
@@ -95,7 +88,6 @@
                 <v-icon start>mdi-rocket-launch</v-icon>
                 Try Live Demo
               </v-btn>
-
               <v-btn
                 href="https://gowthamram2000.github.io"
                 target="_blank"
@@ -109,8 +101,6 @@
                 View Personal Portfolio
               </v-btn>
             </div>
-
-            <!-- Desktop Portfolio Button -->
             <v-btn
               v-if="!mobile"
               href="https://gowthamram2000.github.io"
@@ -126,8 +116,6 @@
           </div>
         </v-container>
       </div>
-
-      <!-- Floating Back Button for Mobile (Additional Option) -->
       <v-fab
         v-if="mobile"
         icon="mdi-arrow-left"
@@ -138,7 +126,6 @@
       </v-fab>
 
       <v-container fluid :class="mobile ? 'pa-4' : 'pa-8'">
-        <!-- Quick Dashboard Access Card -->
         <v-row class="mb-6">
           <v-col cols="12">
             <v-card
@@ -171,8 +158,6 @@
             </v-card>
           </v-col>
         </v-row>
-
-        <!-- Project Overview -->
         <v-row class="mb-8">
           <v-col cols="12">
             <v-card elevation="3" rounded="lg" class="pa-6">
@@ -209,8 +194,6 @@
             </v-card>
           </v-col>
         </v-row>
-
-        <!-- Technology Stack -->
         <v-row class="mb-8">
           <v-col cols="12">
             <h2 class="text-h4 font-weight-bold text-primary mb-6 text-center">
@@ -267,8 +250,6 @@
             </v-card>
           </v-col>
         </v-row>
-
-        <!-- Key Features -->
         <v-row class="mb-8">
           <v-col cols="12">
             <h2 class="text-h4 font-weight-bold text-primary mb-6 text-center">
@@ -285,8 +266,6 @@
             </v-card>
           </v-col>
         </v-row>
-
-        <!-- System Architecture -->
         <v-row class="mb-8">
           <v-col cols="12">
             <v-card elevation="3" rounded="lg" class="pa-6">
@@ -401,8 +380,6 @@
             </v-card>
           </v-col>
         </v-row>
-
-        <!-- Project Stats -->
         <v-row class="mb-8">
           <v-col cols="12">
             <h2 class="text-h4 font-weight-bold text-primary mb-6 text-center">
@@ -419,7 +396,6 @@
           </v-col>
         </v-row>
 
-        <!-- Developer Section -->
         <v-row class="mb-8">
           <v-col cols="12">
             <v-card elevation="3" rounded="lg" class="developer-card pa-8">
@@ -490,8 +466,6 @@
             </v-card>
           </v-col>
         </v-row>
-
-        <!-- Final Call to Action -->
         <v-row class="mb-8">
           <v-col cols="12">
             <v-card
@@ -535,8 +509,6 @@
         </v-row>
       </v-container>
     </div>
-
-    <!-- Footer -->
     <div class="footer-section pa-6 text-center">
       <div class="text-body-2 text-medium-emphasis body-text">
         Built with ❤️ using Vue.js, FastAPI, Python & Cloud • © 2025 Gowtham Ram
@@ -552,8 +524,6 @@ import { useRouter } from 'vue-router'
 
 const { mobile } = useDisplay()
 const router = useRouter()
-
-// Navigation methods
 const goBackToDashboard = () => {
   router.push('/dashboard')
 }
@@ -606,12 +576,9 @@ const stats = ref([
 </script>
 
 <style scoped>
-/* Content wrapper to account for app bar */
 .content-wrapper {
-  padding-top: 64px; /* Height of app bar */
+  padding-top: 64px; 
 }
-
-/* Back Navigation Styles */
 .back-navigation {
   position: fixed !important;
   top: 0;
@@ -629,8 +596,6 @@ const stats = ref([
   background-color: rgba(255, 255, 255, 0.1);
   transform: translateX(-2px);
 }
-
-/* Floating Back Button */
 .floating-back-btn {
   position: fixed !important;
   bottom: 24px;
@@ -639,19 +604,16 @@ const stats = ref([
   box-shadow: 0 8px 24px rgba(25, 118, 210, 0.3);
 }
 
-/* Dashboard Access Card */
 .dashboard-access-card {
   border: 2px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
 }
 
-/* CTA Card */
 .cta-card {
   background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
   border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Enhanced font sizes */
 .body-text {
   font-size: 1.2em !important;
   line-height: 1.6 !important;
@@ -669,7 +631,6 @@ const stats = ref([
   font-size: 1.44rem !important;
 }
 
-/* Clickable Link Styling */
 .clickable-link {
   cursor: pointer !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -681,7 +642,6 @@ const stats = ref([
   text-decoration: none;
 }
 
-/* Hero Section */
 .hero-section {
   background: linear-gradient(135deg, #1976d2 0%, #1565c0 50%, #0d47a1 100%);
   min-height: 60vh;
@@ -732,7 +692,6 @@ const stats = ref([
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Architecture Diagram */
 .architecture-diagram {
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
   border-radius: 16px;
@@ -799,8 +758,6 @@ const stats = ref([
   border-radius: 12px;
   border: 1px solid rgba(25, 118, 210, 0.1);
 }
-
-/* Card Styles */
 .v-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -832,13 +789,11 @@ const stats = ref([
   border: 2px solid #e3f2fd;
 }
 
-/* Footer */
 .footer-section {
   background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Mobile Responsive Design */
 @media (max-width: 768px) {
   .content-wrapper {
     padding-top: 64px;
@@ -893,7 +848,6 @@ const stats = ref([
   }
 }
 
-/* Enhanced animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
