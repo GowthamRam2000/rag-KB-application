@@ -1,6 +1,5 @@
 <template>
   <v-layout class="app-layout">
-    <!-- Modern Material Navigation Drawer -->
     <v-navigation-drawer
       v-model="drawer"
       location="left"
@@ -9,8 +8,6 @@
       :permanent="!mobile"
       :temporary="mobile"
       class="navigation-drawer">
-
-      <!-- Navigation Header -->
       <div class="drawer-header pa-4">
         <div class="d-flex align-center">
           <v-avatar color="white" size="40" class="mr-3">
@@ -24,8 +21,6 @@
       </div>
 
       <v-divider></v-divider>
-
-      <!-- Navigation Menu -->
       <v-list nav density="comfortable" class="pa-2">
         <v-list-item
           prepend-icon="mdi-view-dashboard"
@@ -45,8 +40,6 @@
           active-class="nav-item-active">
         </v-list-item>
       </v-list>
-
-      <!-- Mobile Quick Logout (shown only on mobile) -->
       <div v-if="mobile" class="pa-3 mt-4">
         <v-btn
           block
@@ -59,8 +52,6 @@
           Quick Logout
         </v-btn>
       </div>
-
-      <!-- User Section at Bottom (Desktop only) -->
       <template v-if="!mobile" v-slot:append>
         <v-divider class="mb-2"></v-divider>
         <div class="pa-3">
@@ -88,10 +79,7 @@
         </div>
       </template>
     </v-navigation-drawer>
-
-    <!-- Main Content Area -->
     <v-main class="main-content">
-      <!-- Mobile App Bar with logout button -->
       <v-app-bar
         v-if="mobile"
         elevation="2"
@@ -105,8 +93,6 @@
           RAG App
         </v-toolbar-title>
         <v-spacer></v-spacer>
-
-        <!-- Mobile quick info -->
         <v-chip
           color="white"
           variant="flat"
@@ -115,8 +101,6 @@
           <v-icon start size="12">mdi-message-text</v-icon>
           {{ authStore.queriesRemaining }}
         </v-chip>
-
-        <!-- Mobile logout button -->
         <v-btn
           icon
           variant="text"
@@ -125,14 +109,10 @@
           <v-icon color="white">mdi-logout</v-icon>
         </v-btn>
       </v-app-bar>
-
-      <!-- Router view with proper spacing -->
       <div :class="mobile ? 'mobile-content' : 'desktop-content'">
         <router-view />
       </div>
     </v-main>
-
-    <!-- Logout Confirmation Dialog -->
     <v-dialog v-model="showLogoutDialog" max-width="400" persistent>
       <v-card rounded="lg">
         <v-card-title class="text-h6 pa-4">
@@ -158,8 +138,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <!-- Mobile Overlay Scrim (prevents interaction with content when drawer is open) -->
     <v-overlay
       v-if="mobile && drawer"
       class="mobile-drawer-overlay"
@@ -179,27 +157,17 @@ import { useDisplay } from 'vuetify'
 
 const { mobile } = useDisplay()
 const authStore = useAuthStore()
-
-// Drawer state management
 const drawer = ref(!mobile.value)
 const showLogoutDialog = ref(false)
-
-// Computed property for drawer state
 const isDrawerOpen = computed(() => mobile.value && drawer.value)
-
-// Toggle drawer function
 const toggleDrawer = () => {
   drawer.value = !drawer.value
 }
-
-// Provide drawer state to child components (THIS IS CRUCIAL FOR FIXING THE OVERLAY)
 provide('drawerState', {
   isOpen: isDrawerOpen,
   toggle: toggleDrawer,
   drawer: drawer
 })
-
-// Logout handlers
 const handleLogout = () => {
   showLogoutDialog.value = true
 }
@@ -207,21 +175,15 @@ const handleLogout = () => {
 const confirmLogout = () => {
   authStore.logout()
   showLogoutDialog.value = false
-  // Close drawer after logout on mobile
   if (mobile.value) {
     drawer.value = false
   }
 }
-
-// Watch for mobile changes to adjust drawer
 watch(mobile, (newMobile) => {
   drawer.value = !newMobile
 }, { immediate: true })
-
-// Auto-close drawer when clicking outside on mobile
 watch(isDrawerOpen, (isOpen) => {
   if (isOpen && mobile.value) {
-    // Add body class to prevent scrolling when drawer is open
     document.body.classList.add('drawer-open')
   } else {
     document.body.classList.remove('drawer-open')
@@ -236,7 +198,6 @@ watch(isDrawerOpen, (isOpen) => {
 
 .navigation-drawer {
   border-right: 1px solid rgba(0,0,0,0.12);
-  /* CRITICAL: High z-index for navigation drawer */
   z-index: 1006 !important;
 }
 
@@ -275,12 +236,11 @@ watch(isDrawerOpen, (isOpen) => {
   top: 0;
   left: 0;
   right: 0;
-  /* CRITICAL: Z-index below navigation drawer */
   z-index: 1005 !important;
 }
 
 .mobile-content {
-  padding-top: 56px; /* Height of mobile app bar */
+  padding-top: 56px; 
 }
 
 .desktop-content {
@@ -294,14 +254,10 @@ watch(isDrawerOpen, (isOpen) => {
 .mobile-logout-btn:hover {
   transform: translateY(-1px);
 }
-
-/* CRITICAL: Mobile drawer overlay for proper interaction blocking */
 .mobile-drawer-overlay {
   z-index: 1005 !important;
   pointer-events: auto !important;
 }
-
-/* Enhanced button styles */
 .v-btn {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -309,8 +265,6 @@ watch(isDrawerOpen, (isOpen) => {
 .v-btn:hover {
   transform: translateY(-1px);
 }
-
-/* Responsive Design */
 @media (max-width: 1024px) {
   .navigation-drawer {
     width: 260px;
@@ -320,27 +274,22 @@ watch(isDrawerOpen, (isOpen) => {
 @media (max-width: 768px) {
   .navigation-drawer {
     width: 100vw;
-    /* Ensure mobile drawer covers full screen */
     max-width: 100vw;
   }
 
   .drawer-header {
     padding: 12px 16px;
-    /* Handle notch/safe area on mobile */
     padding-top: calc(12px + env(safe-area-inset-top));
   }
 
   .drawer-header .text-h6 {
     font-size: 1.1rem;
   }
-
-  /* CRITICAL: Mobile specific drawer styling */
   .navigation-drawer.v-navigation-drawer--temporary {
     z-index: 1006 !important;
   }
 }
 
-/* Handle iOS Safari viewport issues */
 @supports (-webkit-touch-callout: none) {
   .mobile-app-bar {
     height: calc(56px + env(safe-area-inset-top));
@@ -355,13 +304,9 @@ watch(isDrawerOpen, (isOpen) => {
     padding-top: calc(16px + env(safe-area-inset-top));
   }
 }
-
-/* CRITICAL: Ensure proper overlay behavior and z-index stacking */
 .v-overlay--active {
   z-index: 1004;
 }
-
-/* Enhanced dialog styling */
 .v-dialog > .v-overlay__content {
   margin: 24px;
 }
@@ -369,20 +314,15 @@ watch(isDrawerOpen, (isOpen) => {
 .v-card {
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
 }
-
-/* Animation for drawer */
 .navigation-drawer {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* CRITICAL: Prevent body scroll when drawer is open on mobile */
 :global(body.drawer-open) {
   overflow: hidden;
   position: fixed;
   width: 100%;
 }
-
-/* CRITICAL: Z-index hierarchy for mobile */
 .v-app-bar {
   z-index: 1005 !important;
 }
@@ -395,7 +335,6 @@ watch(isDrawerOpen, (isOpen) => {
   z-index: 1005 !important;
 }
 
-/* Ensure mobile stats and other content stay below drawer */
 :global(.mobile-stats-wrapper) {
   z-index: 1003 !important;
 }
