@@ -17,10 +17,7 @@ DAILY_QUERY_LIMIT = 10
 router = APIRouter()
 
 def _check_and_reset_daily_limits(user: models.User, db: Session):
-    """
-    A helper function to check if the user's last activity was on a previous day.
-    If so, it resets their daily counters. This is the core of the reset logic.
-    """
+
     today = date.today()
     if user.last_activity_date and user.last_activity_date.date() < today:
         user.query_count = 0
@@ -68,10 +65,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 
 @router.get("/users/me", response_model=user_schema.UserDetail)
 def read_users_me(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(auth.get_db)):
-    """
-    Fetch the profile of the currently authenticated user.
-    This also resets their daily limits if it's their first visit of the day.
-    """
+
     _check_and_reset_daily_limits(current_user, db)
     db.commit()
     db.refresh(current_user)
@@ -82,9 +76,7 @@ def upload_document(
         db: Session = Depends(auth.get_db),
         current_user: models.User = Depends(auth.get_current_user)
 ):
-    """
-    Enhanced file upload with support for PDF and DOCX files, including advanced analysis.
-    """
+
     try:
         _check_and_reset_daily_limits(current_user, db)
         if current_user.pdf_upload_count >= DAILY_UPLOAD_LIMIT:
@@ -174,7 +166,6 @@ def upload_document(
 
 @router.get("/documents", response_model=List[doc_schema.Document])
 def list_user_documents(current_user: models.User = Depends(auth.get_current_user)):
-    """List all documents for the current user."""
     return current_user.documents
 
 
@@ -184,7 +175,6 @@ def delete_document(
         db: Session = Depends(auth.get_db),
         current_user: models.User = Depends(auth.get_current_user)
 ):
-    """Delete a specific document."""
     doc_to_delete = db.query(models.Document).filter(models.Document.id == doc_id).first()
     if not doc_to_delete:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found.")
@@ -209,9 +199,7 @@ def perform_rag_query(
         db: Session = Depends(auth.get_db),
         current_user: models.User = Depends(auth.get_current_user)
 ):
-    """
-    Enhanced RAG query with advanced document understanding and friendly personality.
-    """
+ 
     try:
         _check_and_reset_daily_limits(current_user, db)
         if current_user.query_count >= DAILY_QUERY_LIMIT:
