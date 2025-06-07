@@ -1,0 +1,22 @@
+# FastAPI Web Framework
+fastapi[all]
+
+# Database & ORM
+sqlalchemy
+psycopg2-binary # PostgreSQL driver
+
+# Google Cloud Libraries
+google-cloud-storage
+google-cloud-documentai
+google-cloud-aiplatform # Make sure this is added for Vertex AI
+
+# Authentication & Security
+python-jose[cryptography]
+passlib[bcrypt]
+
+# For reading environment variables from .env file
+python-dotenv
+PyMuPDF
+gunicorn
+cloud-sql-python-connector[pg8000]
+pg8000

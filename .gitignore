@@ -1,0 +1,27 @@
+# Environment variables - NEVER COMMIT THESE
+.env
+.env.*
+
+# Google Cloud credentials - NEVER COMMIT THESE
+google-credentials.json
+*.json
+
+# Python virtual environment
+venv/
+(rag-api)/
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE and OS specific files
+.idea/
+.vscode/
+.DS_Store
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
