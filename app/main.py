@@ -8,18 +8,12 @@ from app.core.config import PROJECT_NAME, API_V1_STR
 from app.db.base import Base
 from app.db.session import engine
 Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title=PROJECT_NAME)
-
-# In app/main.py
-
 origins = [
-    # For local development
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://rag-frontend-355828630002.us-central1.run.app"
+    ""
 ]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
