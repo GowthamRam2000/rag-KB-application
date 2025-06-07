@@ -17,7 +17,7 @@ from app.core.config import INSTANCE_CONNECTION_NAME
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 PROJECT_ID = INSTANCE_CONNECTION_NAME.split(':')[0]
-BUCKET_NAME = 'rag-document-uploads'
+BUCKET_NAME = 'your bucket name'
 LOCATION = 'us-central1'
 
 try:
@@ -26,8 +26,6 @@ try:
 except Exception as e:
     logger.error(f"Failed to initialize storage client: {e}")
     storage_client = None
-
-
 class DocumentType(Enum):
     ACADEMIC_PAPER = "academic_paper"
     LEGAL_CONTRACT = "legal_contract"
@@ -41,16 +39,12 @@ class DocumentType(Enum):
     EDUCATIONAL_MATERIAL = "educational_material"
     NEWS_ARTICLE = "news_article"
     GENERAL_DOCUMENT = "general_document"
-
-
 class ContentComplexity(Enum):
     SIMPLE = "simple"
     MODERATE = "moderate"
     COMPLEX = "complex"
     HIGHLY_TECHNICAL = "highly_technical"
     SPECIALIZED = "specialized"
-
-
 @dataclass
 class DocumentMetadata:
     file_type: str
@@ -65,7 +59,6 @@ class DocumentMetadata:
     structure_analysis: Dict[str, Any]
     confidence_score: float
 
-
 @dataclass
 class SemanticChunk:
     content: str
@@ -76,7 +69,6 @@ class SemanticChunk:
     relationships: List[str]
     context_window: str
 def upload_file_to_gcs(file_contents: bytes, filename: str, content_type: str):
-    """Uploads the original file to Google Cloud Storage for archival with enhanced metadata."""
     if not storage_client:
         logger.error("Storage client not initialized")
         return False
@@ -97,7 +89,6 @@ def upload_file_to_gcs(file_contents: bytes, filename: str, content_type: str):
         return False
 def upload_file_to_gcs_with_metadata(file_contents: bytes, filename: str, content_type: str,
                                      metadata: DocumentMetadata):
-    """Upload file with enhanced metadata to GCS."""
     if not storage_client:
         logger.error("Storage client not initialized")
         return False
@@ -120,7 +111,6 @@ def upload_file_to_gcs_with_metadata(file_contents: bytes, filename: str, conten
         logger.error(f"Failed to upload to GCS with metadata: {e}")
         return False
 def extract_text_from_pdf(file_contents: bytes) -> str:
-    """Enhanced PDF text extraction with better formatting and error handling."""
     if not file_contents:
         raise ValueError("No file contents provided")
     text = ""
@@ -158,7 +148,6 @@ def extract_text_from_pdf(file_contents: bytes) -> str:
         logger.error(f"Failed to extract text from PDF: {e}")
         raise ValueError(f"Could not parse the provided PDF file: {e}")
 def extract_text_from_pdf_advanced(file_contents: bytes) -> Tuple[str, DocumentMetadata]:
-    """Advanced PDF text extraction with comprehensive analysis."""
     text = ""
     metadata_info = {
         "pages": 0,
@@ -231,7 +220,6 @@ def extract_text_from_pdf_advanced(file_contents: bytes) -> Tuple[str, DocumentM
         logger.error(f"Advanced PDF extraction failed: {e}")
         raise ValueError(f"Could not parse the provided PDF file: {e}")
 def extract_text_from_docx(file_contents: bytes) -> str:
-    """Enhanced DOCX text extraction with structure preservation."""
     if not file_contents:
         raise ValueError("No file contents provided")
     try:
@@ -291,7 +279,6 @@ def extract_text_from_docx(file_contents: bytes) -> str:
 
 
 def extract_text_from_docx_advanced(file_contents: bytes) -> Tuple[str, DocumentMetadata]:
-    """Advanced DOCX text extraction with structure preservation."""
     try:
         with zipfile.ZipFile(BytesIO(file_contents), 'r') as docx_zip:
             document_xml = docx_zip.read('word/document.xml')
@@ -374,7 +361,6 @@ def extract_text_from_docx_advanced(file_contents: bytes) -> Tuple[str, Document
 
 
 def determine_file_type_and_extract(file_contents: bytes, filename: str) -> str:
-    """Determines file type and extracts text with validation."""
     if not file_contents:
         raise ValueError("No file contents provided")
     if not filename:
@@ -391,7 +377,6 @@ def determine_file_type_and_extract(file_contents: bytes, filename: str) -> str:
         raise ValueError("Unsupported file format. Please upload PDF or DOCX files only.")
 def determine_file_type_and_extract_advanced(file_contents: bytes, filename: str) -> Tuple[
     str, DocumentMetadata, Dict[str, Any]]:
-    """Enhanced file processing with comprehensive analysis."""
     filename_lower = filename.lower()
 
     try:
@@ -409,7 +394,6 @@ def determine_file_type_and_extract_advanced(file_contents: bytes, filename: str
         logger.error(f"Advanced file processing failed: {e}")
         raise
 def detect_primary_language(text: str) -> str:
-    """Detect the primary language of the document using heuristics."""
     if not text:
         return "English"
     text_sample = text[:1000].lower()
@@ -432,7 +416,6 @@ def detect_primary_language(text: str) -> str:
     else:
         return "English"
 def classify_document_type(text: str) -> DocumentType:
-    """Classify the document type based on content analysis."""
     text_lower = text.lower()
     academic_terms = ['abstract', 'methodology', 'literature review', 'hypothesis', 'conclusion', 'references',
                       'citation']
@@ -455,7 +438,6 @@ def classify_document_type(text: str) -> DocumentType:
     else:
         return DocumentType.GENERAL_DOCUMENT
 def assess_content_complexity(text: str) -> ContentComplexity:
-    """Assess the complexity level of the document content."""
     sentences = text.split('.')
     avg_sentence_length = sum(len(s.split()) for s in sentences) / len(sentences) if sentences else 0
     technical_terms = ['algorithm', 'methodology', 'implementation', 'specification', 'configuration',
@@ -482,7 +464,6 @@ def assess_content_complexity(text: str) -> ContentComplexity:
     else:
         return ContentComplexity.SIMPLE
 def extract_key_topics(text: str) -> List[str]:
-    """Extract key topics from the document using keyword analysis."""
     if not text:
         return []
     words = re.findall(r'\b[a-zA-Z]{4,}\b', text.lower())
@@ -500,7 +481,6 @@ def extract_key_topics(text: str) -> List[str]:
 
 
 def extract_named_entities(text: str) -> List[str]:
-    """Extract named entities using pattern matching."""
     if not text:
         return []
     entities = []
@@ -512,7 +492,7 @@ def extract_named_entities(text: str) -> List[str]:
 
     for pattern in date_patterns:
         matches = re.findall(pattern, text, re.IGNORECASE)
-        entities.extend([f"DATE:{match}" for match in matches[:5]])  # Limit to 5
+        entities.extend([f"DATE:{match}" for match in matches[:5]]) 
     money_patterns = [
         r'\$\d+(?:,\d{3})*(?:\.\d{2})?',
         r'₹\d+(?:,\d{3})*(?:\.\d{2})?',
@@ -524,7 +504,7 @@ def extract_named_entities(text: str) -> List[str]:
         entities.extend([f"MONEY:{match}" for match in matches[:5]])
     org_patterns = [
         r'\b[A-Z][a-z]+ (?:Inc|Corp|LLC|Ltd|Company|Corporation|Limited)\b',
-        r'\b[A-Z]{2,}\b'  # Acronyms
+        r'\b[A-Z]{2,}\b' 
     ]
 
     for pattern in org_patterns:
@@ -533,7 +513,6 @@ def extract_named_entities(text: str) -> List[str]:
 
     return list(set(entities))[:20]
 def calculate_extraction_confidence(text: str, structure_info: Dict) -> float:
-    """Calculate confidence score for text extraction quality."""
     confidence = 0.5
     if len(text) > 1000:
         confidence += 0.2
@@ -550,7 +529,6 @@ def calculate_extraction_confidence(text: str, structure_info: Dict) -> float:
 
 
 def analyze_document_structure(context: str) -> Dict[str, Any]:
-    """Enhanced document analysis that builds on the original structure."""
     if not context or not context.strip():
         return {
             "has_tables": False,
@@ -611,7 +589,6 @@ def analyze_document_structure(context: str) -> Dict[str, Any]:
 
     return analysis
 def perform_comprehensive_document_analysis(text: str, metadata: DocumentMetadata) -> Dict[str, Any]:
-    """Perform comprehensive document structure and content analysis."""
     analysis = {
         "document_metadata": metadata.__dict__,
         "content_structure": analyze_content_structure(text),
@@ -625,7 +602,6 @@ def perform_comprehensive_document_analysis(text: str, metadata: DocumentMetadat
 
     return analysis
 def analyze_content_structure(text: str) -> Dict[str, Any]:
-    """Analyze the structural elements of the document."""
     structure = {
         "sections": [],
         "subsections": [],
@@ -669,7 +645,6 @@ def analyze_content_structure(text: str) -> Dict[str, Any]:
 
 
 def perform_semantic_analysis(text: str) -> Dict[str, Any]:
-    """Perform semantic analysis to understand content meaning."""
     semantic_info = {
         "key_concepts": [],
         "concept_relationships": [],
@@ -696,7 +671,6 @@ def perform_semantic_analysis(text: str) -> Dict[str, Any]:
 
     return semantic_info
 def identify_knowledge_domains(text: str) -> List[str]:
-    """Identify the knowledge domains present in the document."""
     domains = []
     text_lower = text.lower()
 
@@ -719,7 +693,6 @@ def identify_knowledge_domains(text: str) -> List[str]:
     return domains
 
 def find_cross_references(text: str) -> List[Dict[str, str]]:
-    """Find cross-references and related information within the document."""
     references = []
     ref_patterns = [
         r'(?:see|refer to|as per|according to)\s+(?:section|chapter|table|figure|appendix)\s+(\w+)',
@@ -740,7 +713,6 @@ def find_cross_references(text: str) -> List[Dict[str, str]]:
 
 
 def identify_data_patterns(text: str) -> List[Dict[str, Any]]:
-    """Identify structured data patterns in the document."""
     patterns = []
     rate_pattern = r'(\w+(?:\s+\w+)*)\s*[:\-]\s*(?:₹|Rs\.?|\$|USD|INR)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)'
     rate_matches = re.finditer(rate_pattern, text, re.IGNORECASE)
@@ -765,7 +737,6 @@ def identify_data_patterns(text: str) -> List[Dict[str, Any]]:
 
 
 def map_contextual_relationships(text: str) -> Dict[str, List[str]]:
-    """Map contextual relationships between different elements."""
     relationships = {
         "conditional": [],
         "causal": [],
@@ -797,7 +768,6 @@ def map_contextual_relationships(text: str) -> Dict[str, List[str]]:
 
 
 def identify_inference_opportunities(text: str, metadata: DocumentMetadata) -> List[Dict[str, str]]:
-    """Identify opportunities for intelligent inference based on content gaps."""
     opportunities = []
     if "rate" in text.lower() and "grade" in text.lower():
         opportunities.append({
@@ -825,7 +795,6 @@ def identify_inference_opportunities(text: str, metadata: DocumentMetadata) -> L
 
 
 def generate_friendly_greeting_response():
-    """Generate a warm, friendly greeting response."""
     return """
 👋 Hello there! Great to see you here! 
 
@@ -862,7 +831,6 @@ Got any upcoming business trips planned? I'd be thrilled to help you understand 
 What document-related question can I help you with today?
 """
 
-    # Handle general off-topic requests
     return f"""
 I appreciate your question! 🌟 While I'd love to help with that, I'm specifically designed to be your document  expert. I'm like having a assistant  who knows every detail of the document that you have uploaded!
 
@@ -881,7 +849,6 @@ What aspect of documents  can I help you explore today?
 
 
 def generate_vague_question_response():
-    """Generate response for vague or unclear questions."""
     return """
 I'm so glad you asked! 🌟 I'm your friendly travel policy companion, and I absolutely love helping colleagues navigate their business travel needs.
 
@@ -900,7 +867,6 @@ What aspect of business travel would you like to explore today? I'm here to help
 
 
 def is_off_topic_request(question_lower: str) -> bool:
-    """Check if the question is off-topic (not related to travel policy)."""
     off_topic_keywords = [
         'program', 'code', 'function', 'algorithm', 'script', 'software',
         'python', 'java', 'javascript', 'write', 'create', 'develop',
@@ -918,7 +884,6 @@ def is_off_topic_request(question_lower: str) -> bool:
 
 
 def is_vague_question(question_lower: str) -> bool:
-    """Check if the question is too vague to provide specific help."""
     vague_patterns = [
         'help', 'what can you do', 'tell me', 'explain', 'info', 'information',
         'about', 'details', 'more', 'anything', 'everything'
@@ -931,9 +896,7 @@ def is_vague_question(question_lower: str) -> bool:
 
 def create_dynamic_ultra_prompt_with_personality(question: str, context: str, metadata: DocumentMetadata,
                                                  analysis: Dict[str, Any]) -> str:
-    """Create an ultra-sophisticated dynamic prompt with friendly personality integration."""
 
-    # Extract key information for prompt customization
     doc_type = metadata.document_type.value
     complexity = metadata.complexity_level.value
     primary_lang = metadata.language_primary
@@ -1114,7 +1077,6 @@ Execute with the precision of a specialist, the breadth of a generalist, the ins
 
 def generate_ultra_advanced_answer_with_personality(question: str, context: str, metadata: DocumentMetadata,
                                                     analysis: Dict[str, Any]) -> str:
-    """Generate sophisticated answers using ultra-advanced prompting with friendly personality."""
     try:
         vertexai.init(project=PROJECT_ID, location=LOCATION)
         model = GenerativeModel("gemini-2.0-flash-lite-001")
@@ -1136,7 +1098,6 @@ def generate_ultra_advanced_answer_with_personality(question: str, context: str,
 
 
 def add_friendly_touches(response: str) -> str:
-    """Add friendly elements to the response without changing core content."""
     enthusiastic_starters = ['great', 'excellent', 'perfect', 'wonderful', 'fantastic', 'i\'d be happy', 'absolutely',
                              'sure thing']
     if not any(response.lower().startswith(starter) for starter in enthusiastic_starters):
@@ -1148,7 +1109,6 @@ def add_friendly_touches(response: str) -> str:
 
 
 def generate_friendly_fallback_response(question: str, context: str, metadata: DocumentMetadata) -> str:
-    """Generate a friendly fallback response when the main system fails."""
     return f"""
 🔧 **Oops! Let me help you anyway!**
 
@@ -1174,7 +1134,6 @@ Even with this minor technical issue, I can assist you with travel policy questi
 
 def generate_contextual_friendly_response(question: str, context: str, metadata: DocumentMetadata,
                                           analysis: Dict[str, Any]) -> str:
-    """Generate friendly, contextual responses based on query type."""
 
     question_lower = question.lower().strip()
     if question_lower in ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening']:
@@ -1320,7 +1279,6 @@ def generate_answer_with_ultra_rag(question: str, context: str, filename: str = 
         logger.error(f"Ultra RAG processing failed: {e}")
         return generate_friendly_fallback_response(question, context, metadata if 'metadata' in locals() else None)
 def create_semantic_chunks(text: str, metadata: DocumentMetadata) -> List[SemanticChunk]:
-    """Create semantically meaningful chunks for better processing."""
     chunks = []
     sections = re.split(r'\n#{1,6}\s+', text)
     for i, section in enumerate(sections):
@@ -1342,7 +1300,6 @@ def create_semantic_chunks(text: str, metadata: DocumentMetadata) -> List[Semant
 
 
 def calculate_chunk_importance(chunk: str, metadata: DocumentMetadata) -> float:
-    """Calculate the importance score of a text chunk."""
     score = 0.5
     if len(chunk) > 500:
         score += 0.2
@@ -1357,7 +1314,6 @@ def calculate_chunk_importance(chunk: str, metadata: DocumentMetadata) -> float:
 
 
 def extract_chunk_topics(chunk: str) -> List[str]:
-    """Extract topics specific to a chunk."""
     words = re.findall(r'\b[a-zA-Z]{4,}\b', chunk.lower())
     word_freq = {}
     for word in words:
@@ -1368,7 +1324,6 @@ def extract_chunk_topics(chunk: str) -> List[str]:
 
 
 def find_chunk_relationships(chunk: str) -> List[str]:
-    """Find relationships within a chunk."""
     relationships = []
     if re.search(r'\bif\b.*\bthen\b', chunk, re.IGNORECASE):
         relationships.append("conditional")
@@ -1381,7 +1336,6 @@ def find_chunk_relationships(chunk: str) -> List[str]:
 
 
 def get_context_window(sections: List[str], current_index: int) -> str:
-    """Get context window around current section."""
     start_idx = max(0, current_index - 1)
     end_idx = min(len(sections), current_index + 2)
 
@@ -1389,7 +1343,6 @@ def get_context_window(sections: List[str], current_index: int) -> str:
     return ' ... '.join([s[:100] for s in context_sections])
 
 def preprocess_extracted_text_advanced(text: str) -> str:
-    """Advanced text preprocessing with structure preservation."""
     text = re.sub(r'\n\s*\n\s*\n+', '\n\n', text)
     text = re.sub(r'[ \t]+', ' ', text)
     text = re.sub(r'([.!?])([A-Z])', r'\1 \2', text)
@@ -1401,7 +1354,6 @@ def preprocess_extracted_text_advanced(text: str) -> str:
 
 
 def preprocess_text(text: str) -> str:
-    """Clean and preprocess extracted text."""
     if not text:
         return ""
     text = re.sub(r'\n\s*\n\s*\n+', '\n\n', text)
@@ -1412,7 +1364,6 @@ def preprocess_text(text: str) -> str:
 
 
 def validate_file_upload(file_contents: bytes, filename: str) -> Dict[str, Any]:
-    """Validate file upload parameters."""
     validation_result = {
         "is_valid": False,
         "error_message": "",
@@ -1452,7 +1403,6 @@ def validate_file_upload(file_contents: bytes, filename: str) -> Dict[str, Any]:
 
 
 def get_file_info_from_gcs(filename: str) -> Optional[Dict[str, Any]]:
-    """Retrieves file information from Google Cloud Storage."""
     if not storage_client:
         return None
 
@@ -1477,7 +1427,6 @@ def get_file_info_from_gcs(filename: str) -> Optional[Dict[str, Any]]:
         logger.error(f"Failed to get file info for {filename}: {e}")
         return None
 def delete_file_from_gcs(filename: str):
-    """Deletes a file from the Google Cloud Storage bucket."""
     if not storage_client:
         logger.error("Storage client not initialized")
         return False
