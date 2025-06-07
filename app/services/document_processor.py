@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 PROJECT_ID = INSTANCE_CONNECTION_NAME.split(':')[0]
 BUCKET_NAME = 'your bucket name'
-LOCATION = 'us-central1'
+LOCATION = 'us'
 
 try:
     storage_client = storage.Client(project=PROJECT_ID)
