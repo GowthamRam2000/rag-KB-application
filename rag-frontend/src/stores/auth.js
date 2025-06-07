@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import router from '@/router'
 
-const API_URL = 'https://rag-backend-355828630002.us-central1.run.app/api/v1'
+const API_URL = 'backend url'
 const setAuthHeader = (token) => {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 }
